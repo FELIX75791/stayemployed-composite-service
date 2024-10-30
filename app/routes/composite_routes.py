@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Body
 from ..services.user_profile_service import fetch_user_profile
 from ..services.application_tracker_service import fetch_user_applications
 from ..services.application_tracker_service import update_application_status
@@ -36,7 +36,7 @@ async def get_dashboard(user_id: int, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/changeStatus")
-async def change_status(application_ids: list[int], new_status: str, request: Request):
+async def change_status(request: Request, app_updates: dict = Body(...)):
     try:
         # Extract JWT token from the incoming request's authorization header
         token = request.headers.get("Authorization")
@@ -44,11 +44,13 @@ async def change_status(application_ids: list[int], new_status: str, request: Re
             raise HTTPException(status_code=401, detail="Authorization token is missing")
 
         results = []
-        for application_id in application_ids:
-            result = update_application_status(application_id)
+        for application_id, updates in app_updates.items():
+            result = await update_application_status(application_id, updates, token)
             results.append(result)
         
-        return {""}
+        return {
+            "new_application_status": results
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))  

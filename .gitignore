@@ -2,4 +2,4 @@ venv/
 .env
 DS
 .DS_Store
-app/__pycache__/
+__pycache__/

@@ -3,10 +3,17 @@ import httpx
 
 # Asynchronous HTTP GET with Authorization
 async def async_get(url, params=None, headers=None):
+  async with httpx.AsyncClient() as client:
+    response = await client.get(url, params=params, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+# Asynchronous HTTP PATCH with Authorization
+async def async_patch(url, json=None, headers=None):
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, params=params, headers=headers)
-        response.raise_for_status()
-        return response.json()
+      response = await client.patch(url, json=json, headers=headers)
+      response.raise_for_status()  # Raises an error for non-2xx responses
+      return response.json()
 
 
 # Synchronous HTTP PUT with Authorization
