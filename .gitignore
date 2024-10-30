@@ -1,0 +1,5 @@
+venv/
+.env
+DS
+.DS_Store
+app/__pycache__/

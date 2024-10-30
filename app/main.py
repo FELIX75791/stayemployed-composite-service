@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import composite_routes
+from app.routes import composite_routes
 from dotenv import load_dotenv
 
 # Load environment variables
