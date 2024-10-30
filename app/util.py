@@ -34,3 +34,10 @@ def sync_post(url, json=None, headers=None):
     response = httpx.post(url, json=json, headers=headers)
     response.raise_for_status()
     return response.json()
+
+# Asynchronous HTTP POST with Authorization
+async def async_post(url, json=None, headers=None):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, json=json, headers=headers)
+        response.raise_for_status()  # Raises an exception for 4xx/5xx responses
+        return response.json()
