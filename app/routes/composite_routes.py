@@ -8,6 +8,7 @@ from ..services.job_search_service import fetch_all_jobs
 from ..services.auth_service import decode_access_token
 from ..services.Hateoas import Hateoas
 
+
 router = APIRouter()
 
 # @router.get("/")
@@ -44,6 +45,7 @@ def get_dashboard(user_id: int, request: Request):
     try:
         # Extract JWT token from the incoming request's authorization header
         token = request.headers.get("Authorization")
+        print(token)
         if not token:
             raise HTTPException(status_code=401, detail="Authorization token is missing")
         
@@ -68,6 +70,7 @@ def get_dashboard(user_id: int, request: Request):
     except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=str(e.detail))
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/applyJobs")
