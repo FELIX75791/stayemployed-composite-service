@@ -7,6 +7,12 @@ async def async_get(url, params=None, headers=None):
     response = await client.get(url, params=params, headers=headers)
     response.raise_for_status()
     return response.json()
+  
+def sync_get(url, params=None, headers=None):
+  with httpx.Client() as client:
+      response = client.get(url, params=params, headers=headers)
+      response.raise_for_status()  # Raises an error for non-2xx responses
+      return response.json()
 
 # Asynchronous HTTP PATCH with Authorization
 async def async_patch(url, json=None, headers=None):
