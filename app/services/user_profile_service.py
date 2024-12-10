@@ -12,8 +12,8 @@ USER_PROFILE_SERVICE_URL = os.getenv("USER_PROFILE_SERVICE_URL")
 #     headers = {"Authorization": f"Bearer {token}"}
 #     return await async_get(url, headers=headers)
 
-def fetch_user_profile(user_email:str, token: str):
-    url = f"{USER_PROFILE_SERVICE_URL}/info/{user_email}"
+def fetch_user_profile(token: str):
+    url = f"{USER_PROFILE_SERVICE_URL}/me"
     headers = {"Authorization": f"Bearer {token}"}
     try:
       response = sync_get(url, headers=headers)
