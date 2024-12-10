@@ -7,12 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 # Add CORS middleware
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Update to match your frontend URL
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 # Load environment variables
 load_dotenv()
