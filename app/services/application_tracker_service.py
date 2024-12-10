@@ -18,7 +18,7 @@ def fetch_user_applications(token:str):
     headers = {"Authorization": f"Bearer {token}"}
 
     try:
-        response = sync_get(url, headers=headers)
+        response = sync_get(url, headers=headers)["applications"]
         return {"data": response, "status_code": 200}
     except HTTPStatusError as e:
         if e.response.status_code == 401:
