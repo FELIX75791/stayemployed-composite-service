@@ -41,37 +41,61 @@ router = APIRouter()
 # Helper function to generate HATEOAS links
 
 @router.get("/dashboard")
-def get_dashboard(user_id: int, request: Request):
-    try:
+def get_dashboard(request: Request):
+    #try:
         # Extract JWT token from the incoming request's authorization header
         token = request.headers.get("Authorization")
+        token = token[7:]
         print(token)
         if not token:
             raise HTTPException(status_code=401, detail="Authorization token is missing")
-        
-        payload = decode_access_token(token)
-        email: str = payload.get("sub")
-        print(email)
+
         # Use the token when calling user-profile-service
-        user_profile = fetch_user_profile(email, token)
+        user_profile = fetch_user_profile(token)
+        user_name = user_profile["data"]["name"]
+        resume_url = user_profile["data"]["resume_url"]
+        if not resume_url:
+            resume_url = ""
+
         applications = fetch_user_applications(token)
-        
-        # all_jobs = fetch_all_jobs() 
+        app_list = applications["data"]
+
+
+        location_preference = user_profile["data"]["location_preference"]
+        if not location_preference:
+            location_preference = ""
+        keyword_preference = user_profile["data"]["keyword_preference"]
+        if not keyword_preference:
+            keyword_preference = ""
+        employment_type_preference = user_profile["data"]["employment_type_preference"]
+        if not employment_type_preference:
+            employment_type_preference = ""
+        elif employment_type_preference == "FullTime":
+            employment_type_preference = "f"
+        elif employment_type_preference == "PartTime":
+            employment_type_preference = "p"
+
+        rec_list = fetch_all_jobs(location_preference, keyword_preference, employment_type_preference)
+        rec_list = rec_list["job_list"]
+
         hateoas = Hateoas(user_profile["status_code"], applications["status_code"], -1)
         links = hateoas.generate_hateoas("/dashboard")
 
         return {
-            "user_profile": user_profile["data"],
-            "applications": applications["data"],
+            "user_profile": {
+                "user_name" : user_name,
+                "resume_url" : resume_url
+            },
+            "applications": app_list,
+            "jobs_rec": rec_list,
             "links": links
-            # "todays_jobs": all_jobs
         }
     
-    except HTTPException as e:
-        raise HTTPException(status_code=e.status_code, detail=str(e.detail))
-    except Exception as e:
-        print(str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+    #except HTTPException as e:
+        #raise HTTPException(status_code=e.status_code, detail=str(e.detail))
+    #except Exception as e:
+        #print(str(e))
+        #raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/applyJobs")
 async def apply_jobs(request: Request, apply_jobs: dict = Body(...)):
